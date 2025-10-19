@@ -9,46 +9,36 @@ import SwiftUI
 
 struct ChallengeRecordView: View {
     @Binding var recordMenu: Bool
+    @EnvironmentObject var snoozeViewModel: SnoozeIslandViewModel
     
-    let monthTranslations: [String: String] = [
-        "Jan": "1월", "Feb": "2월", "Mar": "3월",
-        "Apr": "4월", "May": "5월", "Jun": "6월",
-        "Jul": "7월", "Aug": "8월", "Sep": "9월",
-        "Oct": "10월", "Nov": "11월", "Dec": "12월"
-    ]
-    
-    
-    let monthsWithDays: [(name: String, days: Int)] = [
-        ("Jan", 31), ("Feb", 29), ("Mar", 31),
-        ("Apr", 30), ("May", 31), ("Jun", 30),
-        ("Jul", 31), ("Aug", 31), ("Sep", 30),
-        ("Oct", 31), ("Nov", 30), ("Dec", 31)
-    ]
-    
-    let monthsWithDaysOdd: [(name: String, days: Int)] = [
-        ("Jan", 31), ("Feb", 28), ("Mar", 31),
-        ("Apr", 30), ("May", 31), ("Jun", 30),
-        ("Jul", 31), ("Aug", 31), ("Sep", 30),
-        ("Oct", 31), ("Nov", 30), ("Dec", 31)
-    ]
-    
-    func localizedMonthName(_ name: String) -> String {
-        if Locale.current.language.languageCode?.identifier == "ko" {
-            return monthTranslations[name] ?? name
-        } else {
-            return name
+    // 월 이름을 언어에 따라 반환
+    var monthsWithDays: [(name: String, days: Int)] {
+        let isLeapYear = selectedYear % 4 == 0 && (selectedYear % 100 != 0 || selectedYear % 400 == 0)
+        let febDays = isLeapYear ? 29 : 28
+        
+        switch snoozeViewModel.currentLanguage {
+        case .korean:
+            return [
+                ("1월", 31), ("2월", febDays), ("3월", 31),
+                ("4월", 30), ("5월", 31), ("6월", 30),
+                ("7월", 31), ("8월", 31), ("9월", 30),
+                ("10월", 31), ("11월", 30), ("12월", 31)
+            ]
+        case .english:
+            return [
+                ("Jan", 31), ("Feb", febDays), ("Mar", 31),
+                ("Apr", 30), ("May", 31), ("Jun", 30),
+                ("Jul", 31), ("Aug", 31), ("Sep", 30),
+                ("Oct", 31), ("Nov", 30), ("Dec", 31)
+            ]
         }
     }
     
-    @State var startYear: Int = Calendar.current.component(.year, from: Date())// 조건을 만족하는 첫 해
-
+    @State var startYear: Int = Calendar.current.component(.year, from: Date())
     let currentYear: Int = Calendar.current.component(.year, from: Date())
     
     @State private var selectedYear: Int = Calendar.current.component(.year, from: Date())
     @State private var selectedDate: Date? = nil
-    
-    @EnvironmentObject var snoozeViewModel: SnoozeIslandViewModel
-
      
     var body: some View {
         ZStack {
@@ -66,14 +56,12 @@ struct ChallengeRecordView: View {
                     }
                     .padding()
                     
-                    
                     Spacer()
                     
                     Picker("", selection: $selectedYear) {
                         ForEach(startYear...currentYear, id: \.self) { year in
                             Text(year.description).tag(year)
                         }
-                        
                     }
                     .background(snoozeViewModel.isNight ? .clear : .white)
                     .cornerRadius(10.0)
@@ -81,13 +69,13 @@ struct ChallengeRecordView: View {
                     .overlay {
                         if snoozeViewModel.isNight {
                             RoundedRectangle(cornerRadius: 5)
-                                      .stroke(Color.white, lineWidth: 1)
+                                .stroke(Color.white, lineWidth: 1)
                         }
                     }
                     .padding(.horizontal)
                 }
                 .overlay {
-                    Text("습관 기록")
+                    Text(snoozeViewModel.currentLanguage == .korean ? "습관 기록" : "Habit Record")
                         .foregroundStyle(snoozeViewModel.isNight ? .white : .black)
                 }
                 .padding(.top, 56)
@@ -102,8 +90,12 @@ struct ChallengeRecordView: View {
                     
                     LazyHGrid(rows: [GridItem(.flexible())], alignment: .top, spacing: 6) {
                         ForEach(monthsWithDays, id: \.name) { month in
-                            MonthView(month: localizedMonthName(month.name), days: Array(1...month.days), selectedDate: $selectedDate)
-                                .foregroundStyle(snoozeViewModel.isNight ? .white : .black)
+                            MonthView(
+                                month: month.name,
+                                days: Array(1...month.days),
+                                selectedDate: $selectedDate, selectedYear: selectedYear
+                            )
+                            .foregroundStyle(snoozeViewModel.isNight ? .white : .black)
                         }
                     }
                 }
@@ -111,33 +103,37 @@ struct ChallengeRecordView: View {
                 .padding(.top, 4)
                 .padding(.bottom, 24)
                 
-                
                 HStack {
-                    
                     if let date = selectedDate {
                         VStack(alignment: .leading, spacing: 0) {
-                            Text("\(formattedDate(date)) 습관 형성 성공했습니다.\n\(snoozeViewModel.challengeNumber)번째 도전 중이었으며,\n \(snoozeViewModel.consecutiveSuccessCount)번 연속 성공했습니다.")
+                            if snoozeViewModel.currentLanguage == .korean {
+                                Text("\(formattedDate(date)) 습관 형성 성공했습니다.\n\(snoozeViewModel.challengeNumber)번째 도전 중이었으며,\n \(snoozeViewModel.consecutiveSuccessCount)번 연속 성공했습니다.")
+                            } else {
+                                Text("Habit formed successfully on \(formattedDateEnglish(date)).\nThis was challenge #\(snoozeViewModel.challengeNumber),\nwith \(snoozeViewModel.consecutiveSuccessCount) consecutive successes.")
+                            }
                         }
                     } else {
-                        Text("성공 일자는 \(snoozeViewModel.consecutiveSuccessCount)일,\n도전 횟수는 \(snoozeViewModel.challengeNumber)번,\n최대 연속 성공 횟수는 \(snoozeViewModel.highestConsecutiveSuccessCount)번입니다.")
+                        if snoozeViewModel.currentLanguage == .korean {
+                            Text("성공 일자는 \(snoozeViewModel.consecutiveSuccessCount)일,\n도전 횟수는 \(snoozeViewModel.challengeNumber)번,\n최대 연속 성공 횟수는 \(snoozeViewModel.highestConsecutiveSuccessCount)번입니다.")
+                        } else {
+                            Text("Success days: \(snoozeViewModel.consecutiveSuccessCount),\nTotal challenges: \(snoozeViewModel.challengeNumber),\nMax consecutive: \(snoozeViewModel.highestConsecutiveSuccessCount)")
+                        }
                     }
                     Spacer()
-                    
                 }
                 .padding()
                 .background(snoozeViewModel.isNight ? .clear : .white.opacity(0.8))
                 .overlay {
                     if snoozeViewModel.isNight {
                         RoundedRectangle(cornerRadius: 10)
-                                  .stroke(Color.white, lineWidth: 1)
-                                  .shadow(color: snoozeViewModel.isNight ? .white : .black, radius: 1)
+                            .stroke(Color.white, lineWidth: 1)
+                            .shadow(color: snoozeViewModel.isNight ? .white : .black, radius: 1)
                     }
                 }
                 .cornerRadius(10.0)
                 .padding()
                 
                 Spacer()
-                
             }
             .padding()
         }
@@ -155,11 +151,17 @@ struct ChallengeRecordView: View {
         formatter.dateFormat = "yyyy년 M월 d일"
         return formatter.string(from: date)
     }
+    
+    func formattedDateEnglish(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US")
+        formatter.dateFormat = "MMM d, yyyy"
+        return formatter.string(from: date)
+    }
 }
 
 #Preview {
     @Previewable @StateObject var snoozeViewModel = SnoozeIslandViewModel.snoozeViewModel
     ChallengeRecordView(recordMenu: .constant(false))
         .environmentObject(snoozeViewModel)
-
 }

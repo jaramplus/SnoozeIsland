@@ -57,10 +57,11 @@ struct ChartView: View {
             VStack {
                 Picker("", selection: $logTheme) {
                     ForEach(LogTheme.allCases) {
-                        Text($0.rawValue.capitalized)
+                        Text($0.localizedString(language: snoozeViewModel.currentLanguage))
                     }
                 }
                 .pickerStyle(.segmented)
+                .padding()
                 
                 VStack {
                     Text("\(formattedDate(visibleStartDate)) - \(formattedDate(visibleEndDate))")
@@ -68,6 +69,7 @@ struct ChartView: View {
                         .opacity(0.8)
                 }
                 .opacity(0.7)
+                
                 Spacer()
                 
                 Chart {
@@ -105,8 +107,12 @@ struct ChartView: View {
                 .foregroundStyle(.lightPurple)
                 .chartXAxis {
                     AxisMarks(position: .bottom) { value in
-                        AxisValueLabel(format: .dateTime.day().month())
+                        if let date = value.as(Date.self) {
+                            AxisValueLabel {
+                                Text(formatXAxisDate(date))
+                            }
                             .foregroundStyle(axisLabelColor)
+                        }
                         AxisGridLine()
                             .foregroundStyle(axisGridColor)
                     }
@@ -164,21 +170,39 @@ struct ChartView: View {
                 }
             } else if sleepLogs.isEmpty {
                 VStack(alignment: .leading, spacing: 0) {
-                    Text("아직 기록한 수면이 없습니다. 단잠의 섬에서 수면을 기록해주세요.")
+                    if snoozeViewModel.currentLanguage == .korean {
+                        Text("아직 기록한 수면이 없습니다. 단잠의 섬에서 수면을 기록해주세요.")
+                    } else {
+                        Text("No sleep records yet. Please record your sleep in Snooze Island.")
+                    }
                 }
             } else {
                 VStack(alignment: .leading, spacing: 0) {
-                    Text("이 기간 동안")
-                        .font(.system(size: 16))
-                    
-                    Text("평균 취침 시간은 \(averageBedtime())시")
-                        .font(.system(size: 16))
-                    
-                    Text("평균 기상 시간은 \(averageWakeupTime())시")
-                        .font(.system(size: 16))
-                    
-                    Text("하루 평균 수면량은 \(averageSleepDuration())시간입니다.")
-                        .font(.system(size: 16))
+                    if snoozeViewModel.currentLanguage == .korean {
+                        Text("이 기간 동안")
+                            .font(.system(size: 16))
+                        
+                        Text("평균 취침 시간은 \(averageBedtime())시")
+                            .font(.system(size: 16))
+                        
+                        Text("평균 기상 시간은 \(averageWakeupTime())시")
+                            .font(.system(size: 16))
+                        
+                        Text("하루 평균 수면량은 \(averageSleepDuration())시간입니다.")
+                            .font(.system(size: 16))
+                    } else {
+                        Text("During this period")
+                            .font(.system(size: 16))
+                        
+                        Text("Average bedtime: \(averageBedtime())")
+                            .font(.system(size: 16))
+                        
+                        Text("Average wake time: \(averageWakeupTime())")
+                            .font(.system(size: 16))
+                        
+                        Text("Average sleep duration: \(averageSleepDuration())")
+                            .font(.system(size: 16))
+                    }
                 }
             }
             
@@ -217,6 +241,23 @@ struct ChartView: View {
     }
     
     // MARK: - Formatting Functions
+    
+    // X축 날짜 포맷 (언어별)
+    private func formatXAxisDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        
+        switch snoozeViewModel.currentLanguage {
+        case .korean:
+            formatter.locale = Locale(identifier: "ko_KR")
+            formatter.dateFormat = "M월 d일"  // 1월 15일
+        case .english:
+            formatter.locale = Locale(identifier: "en_US")
+            formatter.dateFormat = "MMM d"    // Jan 15
+        }
+        
+        return formatter.string(from: date)
+    }
+    
     private func getFormattedDate(for log: SleepLog) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yy.MM.dd"
@@ -225,17 +266,29 @@ struct ChartView: View {
     
     private func getFormattedStartTime(for log: SleepLog) -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "a h:mm"
-        formatter.amSymbol = "오전"
-        formatter.pmSymbol = "오후"
+        
+        if snoozeViewModel.currentLanguage == .korean {
+            formatter.dateFormat = "a h:mm"
+            formatter.amSymbol = "오전"
+            formatter.pmSymbol = "오후"
+        } else {
+            formatter.dateFormat = "h:mm a"
+        }
+        
         return formatter.string(from: log.startTime)
     }
     
     private func getFormattedEndTime(for log: SleepLog) -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "a h:mm"
-        formatter.amSymbol = "오전"
-        formatter.pmSymbol = "오후"
+        
+        if snoozeViewModel.currentLanguage == .korean {
+            formatter.dateFormat = "a h:mm"
+            formatter.amSymbol = "오전"
+            formatter.pmSymbol = "오후"
+        } else {
+            formatter.dateFormat = "h:mm a"
+        }
+        
         return formatter.string(from: log.endTime)
     }
     
@@ -244,7 +297,12 @@ struct ChartView: View {
         let totalMinutes = Int(interval / 60)
         let hours = totalMinutes / 60
         let minutes = totalMinutes % 60
-        return "총 \(hours)시간 \(minutes)분 수면"
+        
+        if snoozeViewModel.currentLanguage == .korean {
+            return "총 \(hours)시간 \(minutes)분 수면"
+        } else {
+            return "Total: \(hours)h \(minutes)m sleep"
+        }
     }
     
     func formattedDate(_ date: Date) -> String {
@@ -332,7 +390,11 @@ struct ChartView: View {
         let hours = Int(averageDuration / 3600)
         let minutes = Int((averageDuration.truncatingRemainder(dividingBy: 3600)) / 60)
         
-        return String(format: "%d시간 %d분", hours, minutes)
+        if snoozeViewModel.currentLanguage == .korean {
+            return String(format: "%d시간 %d분", hours, minutes)
+        } else {
+            return String(format: "%dh %dm", hours, minutes)
+        }
     }
 }
 

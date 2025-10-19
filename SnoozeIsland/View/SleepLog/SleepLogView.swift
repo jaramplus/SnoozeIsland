@@ -9,8 +9,17 @@ import SwiftUI
 import Charts
 
 enum LogTheme: String, CaseIterable, Identifiable {
-  case week = "주", month = "달"
-  var id: Self { self }
+    case week = "주", month = "달"
+    var id: Self { self }
+    
+    func localizedString(language: Language) -> String {
+        switch self {
+        case .week:
+            return language == .korean ? "주" : "Week"
+        case .month:
+            return language == .korean ? "달" : "Month"
+        }
+    }
 }
 
 struct SleepLogView: View {
@@ -32,7 +41,7 @@ struct SleepLogView: View {
                 
                 HStack {
                     Spacer()
-                    Text("수면기록")
+                    Text(snoozeViewModel.currentLanguage == .korean ? "수면기록" : "Sleep Record")
                     Spacer()
                 }
                 .overlay {
@@ -53,18 +62,14 @@ struct SleepLogView: View {
                         .cornerRadius(8.0)
                 }
                 
-                }
-                .padding()
-                
-
-                .cornerRadius(8)
-                .padding()
-                
             }
+            .padding()
+            .cornerRadius(8)
+            .padding()
+        }
         .foregroundStyle(snoozeViewModel.isNight ? .white : .black)
     }
 }
-
 
 #Preview {
     @Previewable @StateObject var snoozeViewModel = SnoozeIslandViewModel.snoozeViewModel
