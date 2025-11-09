@@ -61,7 +61,10 @@ struct ChartView: View {
                     }
                 }
                 .pickerStyle(.segmented)
+                .background(.white.opacity(0.4))
+                .cornerRadius(8)
                 .padding()
+                
                 
                 VStack {
                     Text("\(formattedDate(visibleStartDate)) - \(formattedDate(visibleEndDate))")
@@ -74,7 +77,7 @@ struct ChartView: View {
                 
                 Chart {
                     if sleepLogs.isEmpty {
-                        ForEach([SleepLog(startTime: Date(), endTime:Date()), SleepLog(startTime: Date().addingTimeInterval(86400), endTime:Date().addingTimeInterval(86400)), SleepLog(startTime: Date().addingTimeInterval(86400*2), endTime:Date().addingTimeInterval(86400*2)), SleepLog(startTime: Date().addingTimeInterval(86400*3), endTime:Date().addingTimeInterval(86400*3)), SleepLog(startTime: Date().addingTimeInterval(86400*4), endTime:Date().addingTimeInterval(86400*4)),  SleepLog(startTime: Date().addingTimeInterval(86400*5), endTime:Date().addingTimeInterval(86400*5)), SleepLog(startTime: Date().addingTimeInterval(86400*6), endTime:Date().addingTimeInterval(86400*6)), SleepLog(startTime: Date().addingTimeInterval(86400*7), endTime:Date().addingTimeInterval(86400*7)),SleepLog(startTime: Date().addingTimeInterval(86400 * 8), endTime:Date().addingTimeInterval(86400*8)), SleepLog(startTime: Date().addingTimeInterval(86400*9), endTime:Date().addingTimeInterval(86400*9)), SleepLog(startTime: Date().addingTimeInterval(86400*10), endTime:Date().addingTimeInterval(86400*10)), SleepLog(startTime: Date().addingTimeInterval(86400*11), endTime:Date().addingTimeInterval(86400*11)),  SleepLog(startTime: Date().addingTimeInterval(86400*12), endTime:Date().addingTimeInterval(86400*12)), SleepLog(startTime: Date().addingTimeInterval(86400*13), endTime:Date().addingTimeInterval(86400*13)), SleepLog(startTime: Date().addingTimeInterval(86400*14), endTime:Date().addingTimeInterval(86400*14))]) { log in
+                        ForEach([SleepLog(startTime: Date(), endTime:Date().addingTimeInterval(80000))]) { log in
                             let startHour = Double(Calendar.current.component(.hour, from: log.startTime))
                             let endHour = Double(Calendar.current.component(.hour, from: log.endTime))
                             
@@ -105,18 +108,17 @@ struct ChartView: View {
                 .chartScrollableAxes(.horizontal)
                 .foregroundStyle(.lightPurple)
                 .chartXAxis {
-                    AxisMarks(
-                        position: .bottom,
-                        values: .stride(by: .day, count: logTheme == .month ? 10 : 1)
-                    ) { value in
+                    AxisMarks(values: .stride(by: .day, count: logTheme == .week ? 1 : 10)) { value in
                         if let date = value.as(Date.self) {
-                            AxisValueLabel {
-                                Text(formatXAxisDate(date))
-                            }
-                            .foregroundStyle(axisLabelColor)
-                        }
+                            
+                                AxisValueLabel {
+                                    Text(formatXAxisDate(date))
+                                }
+                                .foregroundStyle(logTheme == .week ? axisLabelColor : .clear)
+                       }
                         AxisGridLine()
-                            .foregroundStyle(axisGridColor)
+                        AxisTick()
+                            
                     }
                 }
                 .chartYAxis {
