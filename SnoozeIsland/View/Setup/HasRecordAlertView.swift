@@ -17,7 +17,7 @@ struct HasRecordAlertView: View {
         VStack {
             HStack(alignment: .center) {
                 Spacer()
-                Text("주의")
+                Text(snoozeViewModel.currentLanguage == .korean ? "주의" : "Notice")
                     .bold()
                 Spacer()
             }
@@ -38,11 +38,10 @@ struct HasRecordAlertView: View {
             VStack {
 
                 VStack(spacing: 0) {
-                    Text("오늘은 이미 수면이 기록되었습니다.")
-                    Text("내일 다시 단잠의 섬을 찾아주세요.")
+                    Text(snoozeViewModel.currentLanguage == .korean ? "오늘은 이미 수면이 기록되었습니다" : "Your sleep has already been recorded today.")
+                    Text(snoozeViewModel.currentLanguage == .korean ? "내일 다시 단잠의 섬을 찾아주세요." : "Please try again tomorrow.")
                 }
                 .font(.subheadline)
-                .padding()
                 .navigationBarBackButtonHidden(true)
                 
                 
@@ -54,7 +53,7 @@ struct HasRecordAlertView: View {
                 }) {
                     HStack {
                         Spacer()
-                        Text("확인")
+                        Text(snoozeViewModel.currentLanguage == .korean ? "확인" : "OK")
                         Spacer()
                     }
                         

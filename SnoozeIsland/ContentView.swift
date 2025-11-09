@@ -18,7 +18,7 @@ struct ContentView: View {
                if isUserInitialized {
                    HomeView()
                } else {
-                   TutorialView()
+                   SprintView()
                }
            }
            .onChange(of: snoozeViewModel.userProfile) { newValue in

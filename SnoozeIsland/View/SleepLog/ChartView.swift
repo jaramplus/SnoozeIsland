@@ -74,8 +74,7 @@ struct ChartView: View {
                 
                 Chart {
                     if sleepLogs.isEmpty {
-                        
-                        ForEach([SleepLog(startTime: Date(), endTime:Date())]) { log in
+                        ForEach([SleepLog(startTime: Date(), endTime:Date()), SleepLog(startTime: Date().addingTimeInterval(86400), endTime:Date().addingTimeInterval(86400)), SleepLog(startTime: Date().addingTimeInterval(86400*2), endTime:Date().addingTimeInterval(86400*2)), SleepLog(startTime: Date().addingTimeInterval(86400*3), endTime:Date().addingTimeInterval(86400*3)), SleepLog(startTime: Date().addingTimeInterval(86400*4), endTime:Date().addingTimeInterval(86400*4)),  SleepLog(startTime: Date().addingTimeInterval(86400*5), endTime:Date().addingTimeInterval(86400*5)), SleepLog(startTime: Date().addingTimeInterval(86400*6), endTime:Date().addingTimeInterval(86400*6)), SleepLog(startTime: Date().addingTimeInterval(86400*7), endTime:Date().addingTimeInterval(86400*7)),SleepLog(startTime: Date().addingTimeInterval(86400 * 8), endTime:Date().addingTimeInterval(86400*8)), SleepLog(startTime: Date().addingTimeInterval(86400*9), endTime:Date().addingTimeInterval(86400*9)), SleepLog(startTime: Date().addingTimeInterval(86400*10), endTime:Date().addingTimeInterval(86400*10)), SleepLog(startTime: Date().addingTimeInterval(86400*11), endTime:Date().addingTimeInterval(86400*11)),  SleepLog(startTime: Date().addingTimeInterval(86400*12), endTime:Date().addingTimeInterval(86400*12)), SleepLog(startTime: Date().addingTimeInterval(86400*13), endTime:Date().addingTimeInterval(86400*13)), SleepLog(startTime: Date().addingTimeInterval(86400*14), endTime:Date().addingTimeInterval(86400*14))]) { log in
                             let startHour = Double(Calendar.current.component(.hour, from: log.startTime))
                             let endHour = Double(Calendar.current.component(.hour, from: log.endTime))
                             
@@ -106,7 +105,10 @@ struct ChartView: View {
                 .chartScrollableAxes(.horizontal)
                 .foregroundStyle(.lightPurple)
                 .chartXAxis {
-                    AxisMarks(position: .bottom) { value in
+                    AxisMarks(
+                        position: .bottom,
+                        values: .stride(by: .day, count: logTheme == .month ? 10 : 1)
+                    ) { value in
                         if let date = value.as(Date.self) {
                             AxisValueLabel {
                                 Text(formatXAxisDate(date))
@@ -242,20 +244,40 @@ struct ChartView: View {
     
     // MARK: - Formatting Functions
     
-    // X축 날짜 포맷 (언어별)
     private func formatXAxisDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         
         switch snoozeViewModel.currentLanguage {
         case .korean:
             formatter.locale = Locale(identifier: "ko_KR")
-            formatter.dateFormat = "M월 d일"  // 1월 15일
+            formatter.dateFormat = "d일"
+            return formatter.string(from: date)
+            
         case .english:
             formatter.locale = Locale(identifier: "en_US")
-            formatter.dateFormat = "MMM d"    // Jan 15
+            formatter.dateFormat = "d"
+            let day = formatter.string(from: date)
+            return day + getOrdinalSuffix(for: Int(day) ?? 0)
+        }
+    }
+
+    private func getOrdinalSuffix(for day: Int) -> String {
+        // Special cases for 11th, 12th, 13th
+        if day >= 11 && day <= 13 {
+            return "th"
         }
         
-        return formatter.string(from: date)
+        // Check last digit
+        switch day % 10 {
+        case 1:
+            return "st"
+        case 2:
+            return "nd"
+        case 3:
+            return "rd"
+        default:
+            return "th"
+        }
     }
     
     private func getFormattedDate(for log: SleepLog) -> String {

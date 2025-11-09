@@ -18,8 +18,9 @@ struct ChallengeCurrentView: View {
                         titleView()
 
                         VStack(spacing: 0) {
-                            Text("\(snoozeViewModel.consecutiveSuccessCount)일째 습관 형성 중이에요!")
-                                .font(.subheadline)
+                            Text(snoozeViewModel.currentLanguage == .korean ?
+                                 "\(snoozeViewModel.consecutiveSuccessCount)일째 습관 형성 중이에요!" : "It’s day \(snoozeViewModel.consecutiveSuccessCount) of your habit streak!")
+                            .font(.subheadline)
                             
                         }
                         .padding()
@@ -32,7 +33,8 @@ struct ChallengeCurrentView: View {
                             withAnimation { control.toggle() }} ) {
                                 HStack {
                                     Spacer()
-                                    Text("다시 정하기")
+                                    Text(snoozeViewModel.currentLanguage == .korean ?
+                                         "다시 정하기" : "Set Again")
                                     Spacer()
                                 }
                         }
@@ -51,7 +53,8 @@ struct ChallengeCurrentView: View {
     private func titleView() -> some View {
         HStack(alignment: .center) {
             Spacer()
-            Text("습관 형성")
+            Text(snoozeViewModel.currentLanguage == .korean ?
+                 "습관 형성" : "Habit building")
                 .font(.headline)
             Spacer()
         }
@@ -72,8 +75,9 @@ struct ChallengeCurrentView: View {
             HStack {
                 Spacer()
                 HStack {
-                    Image(systemName: "moon.fill")
-                    Text("기상")
+                    Image(systemName: "sun.max.fill")
+                    Text(snoozeViewModel.currentLanguage == .korean ?
+                         "기상" : "Daytime")
                 }
                 .font(.system(size: 18))
                 
@@ -100,8 +104,9 @@ struct ChallengeCurrentView: View {
             HStack {
                 Spacer()
                 HStack {
-                    Image(systemName: "sun.max.fill")
-                    Text("취침")
+                    Image(systemName: "moon.fill")
+                    Text(snoozeViewModel.currentLanguage == .korean ?
+                         "취침" : "Bedtime")
                     
                 }
                 .font(.system(size: 18))

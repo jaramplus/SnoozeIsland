@@ -19,7 +19,8 @@ struct ChallengeIntroView: View {
                 VStack {
                     HStack(alignment: .center) {
                         Spacer()
-                        Text("습관 시작")
+                        Text(snoozeViewModel.currentLanguage == .korean ?
+                             "습관 시작" : "Start Habbit")
                             .bold()
                         Spacer()
                     }
@@ -37,8 +38,10 @@ struct ChallengeIntroView: View {
                     
                     
                     VStack(spacing: 0) {
-                        Text("이제 설정한 시간을 지켜")
-                        Text("섬을 가꾸어 주세요")
+                        Text(snoozeViewModel.currentLanguage == .korean ?
+                             "이제 설정한 시간을 지켜" : "Now plase keep the routine and")
+                        Text(snoozeViewModel.currentLanguage == .korean ?
+                             "섬을 가꾸어 주세요" : "nurture the SnoozeIsland.")
                     }
                     .font(.subheadline)
                     .padding()
@@ -61,7 +64,8 @@ struct ChallengeIntroView: View {
                     {
                         HStack {
                             Spacer()
-                            Text("시작")
+                            Text(snoozeViewModel.currentLanguage == .korean ?
+                                 "시작" : "Start")
                             Spacer()
                         }
                     }
@@ -82,8 +86,10 @@ struct ChallengeIntroView: View {
             HStack {
                 Spacer()
                 HStack {
-                    Image(systemName: "moon.fill")
-                    Text("기상")
+                    Image(systemName: "sun.max.fill")
+                    Text(snoozeViewModel.currentLanguage == .korean ?
+                         "기상" : "Daytime")
+                    
                 }
                 .font(.system(size: 18))
                 Spacer()
@@ -109,8 +115,9 @@ struct ChallengeIntroView: View {
             HStack {
                 Spacer()
                 HStack {
-                    Image(systemName: "sun.max.fill")
-                    Text("취침")
+                    Image(systemName: "moon.fill")
+                    Text(snoozeViewModel.currentLanguage == .korean ?
+                         "취침" : "Bedtime")
                 }
                 .font(.system(size: 18))
                 

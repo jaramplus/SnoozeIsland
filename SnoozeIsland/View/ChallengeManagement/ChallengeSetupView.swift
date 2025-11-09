@@ -21,7 +21,8 @@ struct ChallengeSetupView: View {
         VStack {
             HStack(alignment: .center) {
                 Spacer()
-                Text("습관 설정")
+                Text(snoozeViewModel.currentLanguage == .korean ?
+                     "습관 설정" : "Habit Setup")
                     .bold()
                 Spacer()
             }
@@ -40,8 +41,10 @@ struct ChallengeSetupView: View {
             VStack {
                 
                 VStack(spacing: 0) {
-                    Text("섬의 낮과 밤 시간을")
-                    Text(" 설정해주세요.")
+                    Text(snoozeViewModel.currentLanguage == .korean ?
+                         "섬의 낮과 밤 시간을" : "Please set up day")
+                    Text(snoozeViewModel.currentLanguage == .korean ?
+                         " 설정해주세요 " : "and night of SnoozeIsland")
                 }
                 .font(.subheadline)
                 .padding()
@@ -58,7 +61,8 @@ struct ChallengeSetupView: View {
                 {
                     HStack {
                         Spacer()
-                        Text("확인")
+                        Text(snoozeViewModel.currentLanguage == .korean ?
+                             "확인" : "OK")
                         Spacer()
                     }
                 }
@@ -80,8 +84,9 @@ struct ChallengeSetupView: View {
             HStack {
                 Spacer()
                 HStack {
-                    Image(systemName: "moon.fill")
-                    Text("기상")
+                    Image(systemName: "sun.max.fill")
+                    Text(snoozeViewModel.currentLanguage == .korean ?
+                         "기상" : "Daytime")
                 }
                 .font(.system(size: 18))
                 Spacer()
@@ -107,8 +112,9 @@ struct ChallengeSetupView: View {
             HStack {
                 Spacer()
                 HStack {
-                    Image(systemName: "sun.max.fill")
-                    Text("취침")
+                    Image(systemName: "moon.fill")
+                    Text(snoozeViewModel.currentLanguage == .korean ?
+                         "취침" : "Bedtime")
                     
                 }
                 .font(.system(size: 18))

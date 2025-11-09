@@ -7,16 +7,18 @@
 
 import SwiftUI
 
-struct TutorialView: View {
+struct SprintView: View {
     @EnvironmentObject var snoozeViewModel: SnoozeIslandViewModel
     var body: some View {
         VStack {
+            Spacer()
             Text("단잠의 섬")
-            Button(action: {
-                snoozeViewModel.makeUserProfile()
-            }) {
-                Text("시작하기")
-            }
+                .foregroundStyle(.white)
+            Spacer()
+        }
+        .foregroundStyle(.darkPurple)
+        .onAppear() {
+            snoozeViewModel.makeUserProfile()
         }
     }
 }
@@ -24,6 +26,6 @@ struct TutorialView: View {
 #Preview {
     @Previewable @StateObject var snoozeViewModel = SnoozeIslandViewModel.snoozeViewModel
     
-    TutorialView()
+    SprintView()
         .environmentObject(snoozeViewModel)
 }

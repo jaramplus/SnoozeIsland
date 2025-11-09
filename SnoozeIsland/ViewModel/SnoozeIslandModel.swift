@@ -34,9 +34,12 @@ final class SnoozeIslandViewModel: ObservableObject {
             }
         }
     }
+//    
+//    let creatures_day: [String] = ["cloud-tree", "waterdrop-grass", "waterdrop-grass", "rose-mushroom", "deer-day", "bear-day"]
+//    let creatures_night: [String] = ["cloud-tree", "waterdrop-grass", "waterdrop-grass", "rose-mushroom", "deer-night", "bear-night"]
     
-    let creatures_day: [String] = ["cloud-tree", "waterdrop-grass", "waterdrop-grass", "rose-mushroom", "deer-day", "bear-day"]
-    let creatures_night: [String] = ["cloud-tree", "waterdrop-grass", "waterdrop-grass", "rose-mushroom", "deer-night", "bear-night"]
+    let creatures_day: [String] = ["waterdrop-grass", "waterdrop-grass", "rose-mushroom", "deer-day", "bear-day", "cloud-tree"]
+    let creatures_night: [String] = ["waterdrop-grass", "waterdrop-grass", "rose-mushroom", "deer-night", "bear-night", "cloud-tree", ]
     
     @Published var creatures: [DraggableItem] = []
     {

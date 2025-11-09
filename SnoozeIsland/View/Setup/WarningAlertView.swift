@@ -23,7 +23,7 @@ struct WarningAlertView: View {
         VStack {
             HStack(alignment: .center) {
                 Spacer()
-                Text("주의")
+                Text(snoozeViewModel.currentLanguage == .korean ? "주의" : "Notice")
                     .bold()
                 Spacer()
             }
@@ -43,8 +43,8 @@ struct WarningAlertView: View {
             VStack {
 
                 VStack(spacing: 0) {
-                    Text("먼저 왼쪽 시작 메뉴 버튼을 눌러")
-                    Text(" 주기를 설정해주세요 ")
+                    Text(snoozeViewModel.currentLanguage == .korean ? "먼저 왼쪽 시작 메뉴 버튼을 눌러" : "Please click the left-bottom button")
+                    Text(snoozeViewModel.currentLanguage == .korean ? "주기를 설정해주세요." : "to set up the habbit routine.")
                 }
                 .font(.subheadline)
                 .padding()
@@ -59,7 +59,7 @@ struct WarningAlertView: View {
                 }) {
                     HStack {
                         Spacer()
-                        Text("확인")
+                        Text(snoozeViewModel.currentLanguage == .korean ? "확인" : "OK")
                         Spacer()
                     }
                         

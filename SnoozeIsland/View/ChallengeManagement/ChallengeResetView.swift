@@ -17,7 +17,8 @@ struct ChallengeResetView: View {
                 VStack {
                     HStack(alignment: .center) {
                         Spacer()
-                        Text("습관 형성")
+                        Text(snoozeViewModel.currentLanguage == .korean ?
+                             "습관 형성" : "Habit Building")
                             .bold()
                         Spacer()
                     }
@@ -35,9 +36,11 @@ struct ChallengeResetView: View {
                     .padding(.vertical)
                     
                     VStack(alignment: .center ){
-                        Text("형성 중인 습관 주기가")
-                        Text("초기화됩니다.")
-                        Text("다시 설정하겠습니까?")
+                        
+                        Text(snoozeViewModel.currentLanguage == .korean ?
+                             "형성 중인 습관 주기가 초기화됩니다." : "The habbit routine will be all initialized")
+                        Text(snoozeViewModel.currentLanguage == .korean ?
+                             "다시 설정하겠습니까?" : "Would you like to set-up again?")
                     }
                     .padding()
                     
@@ -50,7 +53,8 @@ struct ChallengeResetView: View {
                     }) {
                         HStack {
                             Spacer()
-                            Text("확인")
+                            Text(snoozeViewModel.currentLanguage == .korean ?
+                                 "확인" : "OK")
                             Spacer()
                         }
                     }

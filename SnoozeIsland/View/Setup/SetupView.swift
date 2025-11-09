@@ -36,7 +36,7 @@ struct SetupView: View {
         VStack {
             HStack(alignment: .center) {
                 Spacer()
-                Text("설정")
+                Text(snoozeViewModel.currentLanguage == .korean ? "설정" : "Setting")
                     .bold()
                 Spacer()
             }
@@ -61,7 +61,7 @@ struct SetupView: View {
                             .resizable()
                             .scaledToFit()
                             .frame(width: 30, height: 30)
-                        Text("소리")
+                        Text(snoozeViewModel.currentLanguage == .korean ? "소리" : "Sound")
                         
                         Spacer()
                         Toggle("", isOn: $isSound)
@@ -76,7 +76,7 @@ struct SetupView: View {
                                 .scaledToFit()
                                 .frame(width: 30, height: 30)
                             
-                            Text("알림")
+                            Text(snoozeViewModel.currentLanguage == .korean ? "알림" : "Alert")
                             Spacer()
                             Toggle("", isOn: $isAlarm)
                                 .padding()
@@ -94,7 +94,7 @@ struct SetupView: View {
                 }) {
                     HStack {
                         Spacer()
-                        Text("제작자에게 문의하기")
+                        Text(snoozeViewModel.currentLanguage == .korean ? "제작자에게 문의하기" : "Contact the creator")
                         Spacer()
                     }
                 }
